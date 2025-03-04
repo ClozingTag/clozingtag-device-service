@@ -13,12 +13,13 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/devices")
+@RequestMapping("/api/devices")
 @Tag(name = "Devices", description = "Device Management API")
 public class DeviceController {
 
@@ -34,19 +35,30 @@ public class DeviceController {
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     @PostMapping
-    public ResponseEntity<DeviceResponse> createDevice(@Valid @RequestBody DeviceRequest device) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(deviceService.createDevice(device));
+    public ResponseEntity<DeviceResponse> createDevice(@Valid @RequestBody DeviceRequest deviceRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(deviceService.createDevice(deviceRequest));
     }
 
-    @Operation(summary = "Update an existing device")
+    @Operation(summary = "Update an existing device fully")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Device updated"),
             @ApiResponse(responseCode = "400", description = "Invalid input or device in use"),
             @ApiResponse(responseCode = "404", description = "Device not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<DeviceResponse> updateDevice(@PathVariable Long id, @RequestBody DeviceRequest device) {
-        return ResponseEntity.ok(deviceService.updateDevice(id, device));
+    public ResponseEntity<DeviceResponse> updateDevice(@PathVariable Long id, @RequestBody DeviceRequest updateRequest) {
+        return ResponseEntity.ok(deviceService.updateDevice(id, updateRequest));
+    }
+
+    @Operation(summary = "Update an existing device partially")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Device updated"),
+            @ApiResponse(responseCode = "400", description = "Invalid input or device in use"),
+            @ApiResponse(responseCode = "404", description = "Device not found")
+    })
+    @PatchMapping("/{id}")
+    public ResponseEntity<DeviceResponse> updateDevicePartially(@PathVariable Long id, @RequestParam DeviceState deviceState) {
+        return ResponseEntity.ok(deviceService.updateDevicePartially(id, deviceState));
     }
 
     @Operation(summary = "Get device by ID")
@@ -94,6 +106,7 @@ public class DeviceController {
             @ApiResponse(responseCode = "404", description = "Device not found")
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteDevice(@PathVariable Long id) {
         deviceService.deleteDevice(id);
         return ResponseEntity.noContent().build();

@@ -11,9 +11,11 @@ import java.util.List;
 
 @Service
 public interface DeviceService {
-     DeviceResponse createDevice(DeviceRequest device);
+     DeviceResponse createDevice(DeviceRequest deviceRequest);
 
-     DeviceResponse updateDevice(Long id, DeviceRequest device);
+     DeviceResponse updateDevice(Long id, DeviceRequest updateRequest);
+
+     DeviceResponse updateDevicePartially(Long id, DeviceState deviceState);
 
      DeviceResponse getDeviceById(Long id);
 

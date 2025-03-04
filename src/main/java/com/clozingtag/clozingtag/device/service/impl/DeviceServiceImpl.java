@@ -40,21 +40,35 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public DeviceResponse updateDevice(Long id, DeviceRequest deviceRequest) {
+    public DeviceResponse updateDevice(Long id, DeviceRequest updateRequest) {
         DeviceEntity deviceEntity = deviceRepository.findById(id)
                 .orElseThrow(() -> new DeviceNotFoundException("Device not found with id: " + id));
 
-        if (!EnumSet.allOf(DeviceState.class).contains(deviceRequest.getState())) {
-            throw new DeviceStateException("Invalid state value: " + deviceRequest.getState() + ". Valid values are: " + EnumSet.allOf(DeviceState.class));
+        if (!EnumSet.allOf(DeviceState.class).contains(updateRequest.getState())) {
+            throw new DeviceStateException("Invalid state value: " + updateRequest.getState() + ". Valid values are: " + EnumSet.allOf(DeviceState.class));
         }
 
         if (deviceEntity.getState() == DeviceState.IN_USE) {
-            if (deviceRequest.getName() != null || deviceRequest.getBrand() != null) {
+            if (!updateRequest.getName().isEmpty() || !updateRequest.getBrand().isEmpty()) {
                 throw new DeviceStateException("Cannot update name or brand when device is in use.");
             }
         }
 
-        deviceMapper.updateDeviceEntityFromRequest(deviceRequest, deviceEntity);
+        deviceMapper.updateDeviceEntityFromRequest(updateRequest, deviceEntity);
+        return buildDeviceResponse(deviceRepository.save(deviceEntity));
+    }
+
+
+    @Override
+    public DeviceResponse updateDevicePartially(Long id, DeviceState deviceState) {
+        DeviceEntity deviceEntity = deviceRepository.findById(id)
+                .orElseThrow(() -> new DeviceNotFoundException("Device not found with id: " + id));
+
+        if (!EnumSet.allOf(DeviceState.class).contains(deviceState)) {
+            throw new DeviceStateException("Invalid state value: " + deviceState + ". Valid values are: " + EnumSet.allOf(DeviceState.class));
+        }
+
+        deviceEntity.setState(deviceState);
         return buildDeviceResponse(deviceRepository.save(deviceEntity));
     }
 
