@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -13,7 +14,9 @@ public class SecurityConfiguration {
   @Bean
   public SecurityFilterChain rsSecurityFilterChain(HttpSecurity http) throws Exception {
 
-    return http.authorizeHttpRequests(
+    return http
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(
             authorizeRequests ->
                 authorizeRequests
                     .requestMatchers(WHITELIST)
@@ -30,7 +33,6 @@ public class SecurityConfiguration {
   }
 
   private static final String[] WHITELIST = {
-    "/guests/**",
     "/webhooks/**",
     "/v3/api-docs",
     "/v3/api-docs/**",

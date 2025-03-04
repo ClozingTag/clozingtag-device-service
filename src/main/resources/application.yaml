@@ -50,7 +50,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${AUTH_SERVER_URL:http://localhost:8181/v1/auth/oauth2/jwks}
+          jwk-set-uri: ${AUTH_SERVER_URL:http://localhost:8181/api/auth/v1/oauth2/jwks}
   main:
     allow-bean-definition-overriding: true
 
@@ -111,7 +111,7 @@ openapi:
   service:
     title: ClozingTag Device Service Docs
     version: 1.0.0
-    url: ${GATEWAY_URL:http://localhost:8181/v1/device} #api gateway url
+    url: ${GATEWAY_URL:http://localhost:8181/api/device} #api gateway url
 springdoc:
   api-docs:
     path: /v3/api-docs

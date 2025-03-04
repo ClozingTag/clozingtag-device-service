@@ -13,13 +13,12 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/devices")
+@RequestMapping("/v1/devices")
 @Tag(name = "Devices", description = "Device Management API")
 public class DeviceController {
 
@@ -106,7 +105,6 @@ public class DeviceController {
             @ApiResponse(responseCode = "404", description = "Device not found")
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteDevice(@PathVariable Long id) {
         deviceService.deleteDevice(id);
         return ResponseEntity.noContent().build();
