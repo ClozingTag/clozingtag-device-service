@@ -1,0 +1,129 @@
+server:
+  port: 8183
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: clozingtag-device-service
+  profiles:
+    active: dev #default
+  #  cloud:
+  #    config:
+  #      uri: ${CONFIG_SERVER:http://localhost:8888}
+  #      username: ${CONFIG_USER:clozing_tag_user}
+  #      password: ${CONFIG_PASS:clozingt_ag_pass}
+  #      discovery:
+  #        enabled: true
+  #        service-id: clozingtag-config-service
+  #      fail-fast: true
+  #      retry:
+  #        initial-interval: 1000
+  #        multiplier: 1.5
+  #        max-attempts: 10000
+  #        max-interval: 1500
+  #      enabled: true
+  jpa:
+    hibernate.ddl-auto: update
+    properties:
+      hibernate.temp.use_jdbc_metadata_defaults: true
+    database-platform: org.hibernate.dialect.PostgresPlusDialect
+    generate-ddl: true
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ct_device_service_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:root}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 5
+      initialization-fail-timeout: 0
+  mail:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${AUTH_SERVER_URL:http://localhost:8181/v1/auth/oauth2/jwks}
+  main:
+    allow-bean-definition-overriding: true
+
+device:
+  msg: "Welcome to ClozingTag Device Application"
+  build-version: 1.0.0
+  base-url: ${BASE_URL:http://localhost:8181}
+  mailjet:
+    api:
+      key: xyz
+      secret: xyz
+    sender:
+      email: support@clozingtag.com
+      name: clozingtag
+    templates:
+      device-creation: 6771023
+      device-upadte: 6771005
+      device-deletion: 6771006
+
+
+
+
+
+info:
+  app:
+    name: Device MicroService
+    description: ClozingTag Device Application
+    version: 1.0.0
+
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+
+
+logging:
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){blue} %clr(%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]){yellow} %clr(:){red} %clr(%m){faint}%n"
+  level:
+    com.clozingtag.clozingtag.device.service: DEBUG
+
+
+openapi:
+  service:
+    title: ClozingTag Device Service Docs
+    version: 1.0.0
+    url: ${GATEWAY_URL:http://localhost:8181/v1/device} #api gateway url
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${DISCOVERY_SERVER_URL:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}
