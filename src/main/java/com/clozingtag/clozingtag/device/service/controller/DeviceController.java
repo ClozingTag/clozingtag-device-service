@@ -46,7 +46,7 @@ public class DeviceController {
             @ApiResponse(responseCode = "404", description = "Device not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<DeviceResponse> updateDevice(@PathVariable Long id, @RequestBody DeviceRequest updateRequest) {
+    public ResponseEntity<DeviceResponse> updateDevice(@PathVariable Long id, @Valid @RequestBody DeviceRequest updateRequest) {
         return ResponseEntity.ok(deviceService.updateDevice(id, updateRequest));
     }
 
