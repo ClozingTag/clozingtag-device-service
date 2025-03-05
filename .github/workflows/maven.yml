@@ -48,3 +48,9 @@ jobs:
     - name: Update deployment file
       run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ env.IMAGE_NAME }}/clozingtag-device-service:'${TAG}'|' k8s/clozingtag-device-service-deployment.yaml
 
+    - name: Simulate Deployment
+      run: |
+        echo "Simulating deployment to Staging environment..."
+        sleep 2
+        echo "Deployment successful!"
+
