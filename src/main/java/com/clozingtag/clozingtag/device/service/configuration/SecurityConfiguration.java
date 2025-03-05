@@ -6,19 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 public class SecurityConfiguration {
-
-//          @Bean
-//          public JwtDecoder jwtDecoder() {
-//              return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
-//          }
 
 
   @Bean
