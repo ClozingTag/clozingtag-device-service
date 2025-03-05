@@ -50,7 +50,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${AUTH_SERVER_URL:http://localhost:8181/api/auth/v1/oauth2/jwks}
+          jwk-set-uri: ${AUTH_SERVER_URL:http://localhost:8181/api/auth/oauth2/jwks}
   main:
     allow-bean-definition-overriding: true
 
