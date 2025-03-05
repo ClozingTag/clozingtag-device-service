@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: closingtag-device-manager-service-configmap
+data:
+  active-profile: "default"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: closingtag-device-manager-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: closingtag-device-manager-service
+  template:
+    metadata:
+      labels:
+        app: closingtag-device-manager-service
+    spec:
+      containers:
+        - name: closingtag-device-manager-service
+          image: <IMAGE>  #to be updated by the workflow
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: 800m
+              memory: 1024Mi
+            requests:
+              cpu: 400m
+              memory: 512Mi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: closingtag-device-manager-service-configmap
+                  key: active-profile
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: closingtag-device-manager-db-configmap
+                  key: db-host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: closingtag-device-manager-db-configmap
+                  key: db-port
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: closingtag-device-manager-db-configmap
+                  key: db-name
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: closingtag-device-manager-db-secret
+                  key: db-user
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: closingtag-device-manager-db-secret
+                  key: db-pass
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: closingtag-device-manager-service-svc
+spec:
+  selector:
+    app: closingtag-device-manager-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

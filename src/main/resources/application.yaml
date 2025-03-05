@@ -58,21 +58,6 @@ device:
   msg: "Welcome to ClozingTag Device Application"
   build-version: 1.0.0
   base-url: ${BASE_URL:http://localhost:8181}
-  mailjet:
-    api:
-      key: xyz
-      secret: xyz
-    sender:
-      email: support@clozingtag.com
-      name: clozingtag
-    templates:
-      device-creation: 6771023
-      device-upadte: 6771005
-      device-deletion: 6771006
-
-
-
-
 
 info:
   app:
