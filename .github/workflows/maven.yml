@@ -39,12 +39,18 @@ jobs:
       run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Build container image
-      run: docker build -t ${{ env.IMAGE_NAME }}/clozing-device-service:$(echo $GITHUB_SHA | head -c7) .
+      run: docker build -t ${{ env.IMAGE_NAME }}/clozingtag-device-service:$(echo $GITHUB_SHA | head -c7) .
 
     - name: Push image to GH Container Registry
-      run: docker push ${{ env.IMAGE_NAME }}/clozing-device-service:$(echo $GITHUB_SHA | head -c7)
+      run: docker push ${{ env.IMAGE_NAME }}/clozingtag-device-service:$(echo $GITHUB_SHA | head -c7)
 
 
     - name: Update deployment file
-      run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ env.IMAGE_NAME }}/clozing-device-service:'${TAG}'|' k8s/clozing-device-service-deployment.yaml
+      run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ env.IMAGE_NAME }}/clozingtag-device-service:'${TAG}'|' k8s/clozingtag-device-service-deployment.yaml
+
+    - name: Simulate Deployment
+      run: |
+        echo "Simulating deployment to Staging environment..."
+        sleep 2
+        echo "Deployment successful!"
 
