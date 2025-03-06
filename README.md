@@ -180,7 +180,7 @@ minikube start --driver=docker
 
 ## Authentication & Security
 ## Authentication
-- Create a role
+- Create a role (no token needed) (can be done from the swagger page)
 curl -X 'POST' \
   'http://localhost:8181/api/auth/v1/roles' \
   -H 'accept: */*' \
@@ -188,7 +188,7 @@ curl -X 'POST' \
   -d '{
   "role": "User" //"Admin"
 }'
-- Create a user or admin
+- Create a user (no token needed) (can be done from the swagger page)
   curl -X 'POST' \
   'http://localhost:8181/api/auth/v1/guests/user' \
   -H 'accept: */*' \
