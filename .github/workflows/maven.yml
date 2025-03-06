@@ -58,6 +58,19 @@ jobs:
     - name: Update deployment file
       run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ env.IMAGE_NAME }}/clozingtag-device-service:'${TAG}'|' k8s/clozingtag-device-service-deployment.yaml
 
+
+    - name: Commit updated deployment file
+      if: ${{ github.actor != 'github-actions' }}
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "github-actions@github.com"
+        git remote set-url origin https://github.com/${{ github.repository }}.git
+        git add k8s/clozingtag-device-service-deployment.yaml
+        git commit -m "Update deployment YAML with SHA ${GITHUB_SHA}"
+        git push https://github.com/${{ github.repository }} HEAD:main --force
+      env:
+        GH_TOKEN: ${{ secrets.GH_PAT }}
+
     - name: Simulate Deployment
       run: |
         echo "Simulating deployment to Staging environment..."
