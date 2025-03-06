@@ -1,97 +1,114 @@
+# ClozingTag Microservices
+
 ## Overview
-ClosingTag Inc is a mobile application testing service provider  (TAAS) Testing as a service, that assigns mobile devices to staff and can control the state of the each device and send notifications about the state of the device
+ClozingTag Inc provides a **Testing-as-a-Service (TaaS)** platform, offering mobile device management, authorization, notifications, and API gateway services within a microservices architecture. The platform is containerized with **Docker** and orchestrated using **Kubernetes**.
 
-# Device Service API
-The Devices Service is service in a Microservice Architecuture built by ClosingTag Inc with Spring Boot for managing device resources. It provides functionalities for creating, reading, updating, and deleting devices, with domain validations, pagination, and more. 
-It is containerized using Docker and can be deployed on Kubernetes.
+## Microservices
+This repository contains five key services:
 
-## Features
+1. **ClozingTag Discovery Service (Eureka Server)**
+2. **ClozingTag Gateway Service (Spring Cloud Gateway)**
+3. **ClozingTag Auth Service (Spring Security & JWT Authentication)**
+4. **ClozingTag Device Service (Spring Boot & JPA for device management)**
+5. **ClozingTag Notification Service (Spring Boot & messaging system for notifications)**
 
-### Device Management
-- Create, update, fetch, and delete devices.
-- Fetch devices by brand or state.
-- Pagination support for fetching devices.
+Each service is designed to run independently but communicates through service discovery and API gateway.
 
-### Authentication & Authorization
-- JWT-based authentication.
-- Role-based access control (e.g., only admins can delete devices)
+---
 
-### Audit Logging
-- Track device modifications (create, update, delete).
+## 1. ClozingTag Discovery Service (Eureka Server)
 
-### API Documentation
-- Swagger UI for interactive API documentation.
+### Description
+This service acts as the **Service Registry**, helping other microservices discover and communicate with each other.
 
-### Containerization
-- Dockerized application with Kubernetes deployment support.
+### Features
+- Service discovery for microservices
+- High availability with multiple Eureka instances
 
-## Technologies Used
-- Java 21+
-- Spring Boot 3.x
-- PostgreSQL (database)
-- Redis (caching)
-- Docker (containerization)
-- Kubernetes (orchestration)
-- Swagger (API documentation)
-- JWT (authentication)
-- Mockito Junit (unit testing)
-- Cucumber (integration testing)
-
-## Prerequisites
-- Java 21+
-- Maven 3.9+
-- Docker
-- Kubernetes (optional)
-- PostgreSQL
-- Redis
-
-## Setup Instructions
-
-### 1. Clone the Repository
+### Setup Instructions
+#### Build and Run Locally
 ```bash
-git clone https://github.com/ClozingTag/clozingtag-device-service.git
-cd clozingtag-device-service
-```
-
-
-### 4. Build and Run the Application
-- Build the application using Maven:
-
-```bash
+git clone https://github.com/ClozingTag/clozingtag-discovery-service.git
+cd clozingtag-discovery-service
 mvn clean install
-```
-
-- Run the application:
-
-```bash
 mvn spring-boot:run
 ```
 
-### 5. Access the API
-- The API will be available at `http://localhost:8080`.
-- Access Swagger UI at `http://localhost:8080/swagger-ui.html`.
-- Open Api Docs at `http://localhost:8080/v3/api-docs`.
-
-## Kubernetes Deployment
-
-### 1. Apply Kubernetes Configuration
-- Deploy the application using the provided `deployment.yaml`:
-
+#### Kubernetes Deployment
 ```bash
-kubectl apply -f deployment.yaml
+kubectl apply -f k8s/clozingtag-discovery-service-deployment.yaml
+```
+- The service will be exposed on `http://localhost:8761`.
+
+---
+
+## 2. ClozingTag Gateway Service
+
+### Description
+This service is the **API Gateway**, handling routing, authentication, and security policies.
+
+### Features
+- Global CORS configuration
+- Authentication and authorization with JWT
+- API routing and load balancing
+
+### Setup Instructions
+#### Build and Run Locally
+```bash
+git clone https://github.com/ClozingTag/clozingtag-gateway-service.git
+cd clozingtag-gateway-service
+mvn clean install
+mvn spring-boot:run
 ```
 
-### 2. Access the Application
-- Expose the service:
-
+#### Kubernetes Deployment
 ```bash
-kubectl expose deployment devices-api --type=LoadBalancer --port=8080
+kubectl apply -f k8s/clozingtag-gateway-service-deployment.yaml
+```
+- API Gateway will be available at `http://localhost:8181/webjars/swagger-ui/index.html`. with a select definition to show the contract of the other services
+
+---
+
+## 3. ClozingTag Auth Service
+
+### Description
+Handles user authentication, role-based access control, and JWT token management.
+
+### Features
+- User registration & login
+- JWT-based authentication
+- Role-based authorization
+
+### Setup Instructions
+#### Build and Run Locally
+```bash
+git clone https://github.com/ClozingTag/clozingtag-auth-service.git
+cd clozingtag-auth-service
+mvn clean install
+mvn spring-boot:run
 ```
 
-- Access the API using the external IP provided by Kubernetes.
+#### Kubernetes Deployment
+```bash
+kubectl apply -f k8s/clozingtag-auth-service-db-deployment.yaml
+kubectl apply -f k8s/clozingtag-auth-service-deployment.yaml
+```
 
-## API Endpoints
+- The service will be available at `http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Auth+Service`.
 
+---
+
+## 4. ClozingTag Device Service
+
+### Description
+Manages mobile devices assigned to staff.
+
+### Features
+- CRUD operations for devices
+- Fetch devices by brand and state
+- Role-based permissions for device modifications
+
+### API Endpoints
 | Method | Endpoint | Description |
 |--------|---------|-------------|
 | POST | /devices | Create a new device. |
@@ -101,19 +118,122 @@ kubectl expose deployment devices-api --type=LoadBalancer --port=8080
 | GET | /devices/brand/{brand} | Fetch devices by brand (paginated). |
 | GET | /devices/state/{state} | Fetch devices by state (paginated). |
 | DELETE | /devices/{id} | Delete a device by ID. |
-| POST | /auth/login | Authenticate and get a JWT token. |
-| GET | /login/oauth2/code/google | Login with Google OAuth2. |
 
+You can perform all the api calls from this 
+
+### Setup Instructions
+#### Build and Run Locally
+```bash
+git clone https://github.com/ClozingTag/clozingtag-device-service.git
+cd clozingtag-device-service
+mvn clean install
+mvn spring-boot:run
+```
+
+#### Kubernetes Deployment
+```bash
+kubectl apply -f k8s/clozingtag-device-service-db-deployment.yaml
+kubectl apply -f k8s/clozingtag-device-service-deployment.yaml
+```
+- The service will be available at `http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Device+Service`.
+---
+
+## 5. ClozingTag Notification Service
+
+### Description
+Handles notification delivery related to device assignments.
+
+### Features
+- Sends notifications to users
+- Supports email and push notifications
+
+### Setup Instructions
+#### Build and Run Locally
+```bash
+git clone https://github.com/ClozingTag/clozingtag-notification-service.git
+cd clozingtag-notification-service
+mvn clean install
+mvn spring-boot:run
+```
+
+#### Kubernetes Deployment
+```bash
+kubectl apply -f k8s/clozingtag-notification-service-db-deployment.yaml
+kubectl apply -f k8s/clozingtag-notification-service-deployment.yaml
+```
+- The service will be available at `http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Nofitication+Service`.
+---
+
+## Deployment Order
+Prerequisites
+Before deploying the services, ensure you have the following:
+Minikube installed and running
+Kubectl installed
+Docker installed and configured
+GitHub Container Registry (GHCR) secret added to Kubernetes
+
+### 1. Start Minikube
+```bash
+minikube start --driver=docker
+```
+
+### **To deploy all services on Kubernetes:**
+1. **Deploy Discovery Service**
+   ```bash
+   kubectl apply -f k8s/clozingtag-discovery-service-deployment.yaml
+   ```
+2. **Deploy Gateway Service**
+   ```bash
+   kubectl apply -f k8s/clozingtag-gateway-service-deployment.yaml
+   ```
+3. **Deploy Auth Service (DB first, then service)**
+   ```bash
+   kubectl apply -f k8s/clozingtag-auth-service-db-deployment.yaml
+   kubectl apply -f k8s/clozingtag-auth-service-deployment.yaml
+   ```
+4. **Deploy Device Service (DB first, then service)**
+   ```bash
+   kubectl apply -f k8s/clozingtag-device-service-db-deployment.yaml
+   kubectl apply -f k8s/clozingtag-device-service-deployment.yaml
+   ```
+5. **Deploy Notification Service (DB first, then service)**
+   ```bash
+   kubectl apply -f k8s/clozingtag-notification-service-db-deployment.yaml
+   kubectl apply -f k8s/clozingtag-notification-service-deployment.yaml
+   ```
+
+---
+
+## Authentication & Security
 ## Authentication
-- Use the `/auth/login` endpoint to authenticate and obtain a JWT token.
+- Create a role
+curl -X 'POST' \
+  'http://localhost:8181/api/auth/v1/roles' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "role": "User" //"Admin"
+}'
+- Create a user or admin
+  curl -X 'POST' \
+  'http://localhost:8181/api/auth/v1/guests/user' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "lastname": "Abel",
+  "firstname": "Smiles",
+  "username": "visitsmiles@getnada.com",
+  "password": "smiles"
+}'
+- Use Oauth2 login endpoint `/auth/login` to authenticate and obtain a JWT token.
+  curl --location --request POST 'http://localhost:8181/api/auth/oauth2/token?grant_type=password&username=st.deemene%40gmail.com&password=saint&scope=openid' \
+--header 'Content-Type: application/json'
+
 - Include the token in the Authorization header for secured endpoints:
 
 ```http
 Authorization: Bearer <token>
 ```
-
-## Rate Limiting
-- Rate limiting is applied to all endpoints. The default limit is 100 requests per minute per IP.
 
 ## Audit Logging
 - All device modifications (create, update, delete) are logged in the `audit_log` table.
@@ -121,23 +241,39 @@ Authorization: Bearer <token>
 
 ## Testing
 
-### Unit Tests
+### Unit Tests (Device service only)
 Run unit tests using Maven:
 ```bash
 mvn test
 ```
 
-### Integration Tests
+### Integration Tests (Device service only)
 Run Cucumber integration tests:
 ```bash
 mvn verify
 ```
+- **Role-Based Access Control (RBAC):** Only admin users can perform specific actions like deleting devices.
+---
+
+## Cleanup
+To delete all services and databases:
+```bash
+kubectl delete -f k8s/
+```
+To stop Minikube:
+```bash
+minikube stop
+```
+To delete Minikube cluster:
+```bash
+minikube delete
+```
+
 
 ## Future Improvements
-- Add support for Prometheus and Grafana for monitoring.
-- Convert to a Microservice (OAuth2, gateway and auth service)
-- Implement distributed tracing using Jaeger or Zipkin.
-- Add API Gateway for advanced routing and filtering.
+- Implement **Prometheus & Grafana** for monitoring.
+- Enable **distributed tracing** using Zipkin or Jaeger.
+- Implement **rate limiting** for API protection.
 
 ## Contributing
 Contributions are welcome! Please follow these steps:
@@ -153,4 +289,9 @@ For questions or feedback, please contact:
 - **Saint Deemene**
 - **Email:** saint@closingtag.com
 - **GitHub:** [stdeemene](https://github.com/stdeemene)
+
+## Temp Contact
+For questions or feedback, please reach out:
+- **Email:** support@clozingtag.com
+- **GitHub:** [ClozingTag](https://github.com/ClozingTag)
 
