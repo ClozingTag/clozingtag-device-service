@@ -103,7 +103,7 @@ Manages mobile devices assigned to staff.
 | GET | /devices/state/{state} | Fetch devices by state (paginated). |
 | DELETE | /devices/{id} | Delete a device by ID. |
 
-You can perform all the api calls from this 
+You can perform all/other the api calls from [this](http://localhost:8181/webjars/swagger-ui/index.html)  just select the definition add the token (only token no bearer as it will be auto added)
 
 ### Setup Instructions
 #### Build and Run Locally
