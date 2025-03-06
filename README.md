@@ -33,11 +33,6 @@ cd clozingtag-discovery-service
 mvn clean install
 mvn spring-boot:run
 ```
-
-#### Kubernetes Deployment
-```bash
-kubectl apply -f k8s/clozingtag-discovery-service-deployment.yaml
-```
 - The service will be exposed on `http://localhost:8761`.
 
 ---
@@ -60,11 +55,6 @@ cd clozingtag-gateway-service
 mvn clean install
 mvn spring-boot:run
 ```
-
-#### Kubernetes Deployment
-```bash
-kubectl apply -f k8s/clozingtag-gateway-service-deployment.yaml
-```
 - API Gateway will be available at `http://localhost:8181/webjars/swagger-ui/index.html`. with a select definition to show the contract of the other services
 
 ---
@@ -86,12 +76,6 @@ git clone https://github.com/ClozingTag/clozingtag-auth-service.git
 cd clozingtag-auth-service
 mvn clean install
 mvn spring-boot:run
-```
-
-#### Kubernetes Deployment
-```bash
-kubectl apply -f k8s/clozingtag-auth-service-db-deployment.yaml
-kubectl apply -f k8s/clozingtag-auth-service-deployment.yaml
 ```
 
 - The service will be available at `http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Auth+Service`.
@@ -130,11 +114,6 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-#### Kubernetes Deployment
-```bash
-kubectl apply -f k8s/clozingtag-device-service-db-deployment.yaml
-kubectl apply -f k8s/clozingtag-device-service-deployment.yaml
-```
 - The service will be available at `http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Device+Service`.
 ---
 
@@ -156,11 +135,6 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-#### Kubernetes Deployment
-```bash
-kubectl apply -f k8s/clozingtag-notification-service-db-deployment.yaml
-kubectl apply -f k8s/clozingtag-notification-service-deployment.yaml
-```
 - The service will be available at `http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Nofitication+Service`.
 ---
 
