@@ -8,7 +8,7 @@ spring:
   application:
     name: clozingtag-device-service
   profiles:
-    active: dev #default
+    active: default
   #  cloud:
   #    config:
   #      uri: ${CONFIG_SERVER:http://localhost:8888}
@@ -96,7 +96,7 @@ openapi:
   service:
     title: ClozingTag Device Service Docs
     version: 1.0.0
-    url: ${GATEWAY_URL:http://localhost:8181/api/device} #api gateway url
+    url: ${OPENAPI_GATEWAY_URL:http://localhost:8181/api/device} #https://live.clozingtag.come/api/device
 springdoc:
   api-docs:
     path: /v3/api-docs

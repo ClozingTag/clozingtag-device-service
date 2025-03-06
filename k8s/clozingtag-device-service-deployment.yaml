@@ -1,80 +1,108 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: closingtag-device-manager-service-configmap
+  name: clozingtag-device-service-configmap
 data:
   active-profile: "default"
+  openapi-gateway-url: "http://localhost:8181/api/device" #  "https://live.clozingtag.com/api/device"
+  base-url: "http://clozingtag-gateway-service-svc:8181" # https://live.clozingtag.com
+
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: closingtag-device-manager-service-deployment
+  name: clozingtag-device-service-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: closingtag-device-manager-service
+      app: clozingtag-device-service-deployment
   template:
     metadata:
       labels:
-        app: closingtag-device-manager-service
+        app: clozingtag-device-service-deployment
     spec:
       containers:
-        - name: closingtag-device-manager-service
-          image: <IMAGE>  #to be updated by the workflow
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8080
-          resources:
-            limits:
-              cpu: 800m
-              memory: 1024Mi
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          env:
+        - env:
+            - name: JAVA_OPTIONS
+              value: -XX:TieredStopAtLevel=1 -noverify -Xms128m -Xmx512m -Xss4m -XX:ParallelGCThreads=1
+                -XX:ConcGCThreads=1 -Djava.util.concurrent.ForkJoinPool.common.parallelism=1
+                -cp .
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
                 configMapKeyRef:
-                  name: closingtag-device-manager-service-configmap
                   key: active-profile
+                  name: clozingtag-device-service-configmap
+            - name: BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: clozingtag-device-service-configmap
+                  key: base-url
+            - name: DISCOVERY_SERVER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: clozingtag-discovery-service-configmap
+                  key: discovery-server-url
+            - name: AUTH_SERVER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: clozingtag-auth-service-configmap
+                  key: auth-server-url
+            - name: OPENAPI_GATEWAY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: clozingtag-device-service-configmap
+                  key: openapi-gateway-url
+            #            - name: CONFIG_SERVER
+            #              valueFrom:
+            #                configMapKeyRef:
+            #                  name: clozingtag-device-service-configmap
+            #                  key: config-server-url
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: closingtag-device-manager-db-configmap
+                  name: clozingtag-device-service-db-configmap
                   key: db-host
             - name: DB_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: closingtag-device-manager-db-configmap
+                  name: clozingtag-device-service-db-configmap
                   key: db-port
             - name: DB_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: closingtag-device-manager-db-configmap
+                  name: clozingtag-device-service-db-configmap
                   key: db-name
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: closingtag-device-manager-db-secret
+                  name: clozingtag-device-service-db-secret
                   key: db-user
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: closingtag-device-manager-db-secret
+                  name: clozingtag-device-service-db-secret
                   key: db-pass
-
+          image: <IMAGE>  #to be updated by the workflow
+          imagePullPolicy: IfNotPresent
+          name: clozingtag-device-service
+          ports:
+            - containerPort: 8183
+              protocol: TCP
+          resources: {}
+      imagePullSecrets:
+        - name: clozingtag-ghrc-deployment-secrets
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: closingtag-device-manager-service-svc
+  name: clozingtag-device-service-svc
 spec:
   selector:
-    app: closingtag-device-manager-service
+    app: clozingtag-device-service-deployment
   ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
+    - protocol: "TCP"
+      port: 8183
+      targetPort: 8183
   type: ClusterIP
