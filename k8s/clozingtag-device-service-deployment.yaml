@@ -91,8 +91,6 @@ spec:
             - containerPort: 8183
               protocol: TCP
           resources: {}
-      imagePullSecrets:
-        - name: clozingtag-ghrc-deployment-secrets
 ---
 apiVersion: v1
 kind: Service
