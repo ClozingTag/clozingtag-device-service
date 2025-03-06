@@ -199,8 +199,8 @@ curl -X 'POST' \
   "username": "visitsmiles@getnada.com",
   "password": "smiles"
 }'
-- Use Oauth2 login endpoint `/auth/login` to authenticate and obtain a JWT token.
-  curl --location --request POST 'http://localhost:8181/api/auth/oauth2/token?grant_type=password&username=st.deemene%40gmail.com&password=saint&scope=openid' \
+- Use Oauth2 login endpoint `/oauth2/token` to authenticate and obtain a JWT token.
+ curl --location --request POST 'http://localhost:8181/api/auth/oauth2/token?grant_type=password&username=visitsmiles%40getnada.com&password=smiles&scope=openid' \
 --header 'Content-Type: application/json'
 
 - Include the token in the Authorization header for secured endpoints:
