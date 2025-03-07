@@ -265,7 +265,8 @@ minikube delete
 ## Future Improvements
 - Implement **Prometheus & Grafana** for monitoring.
 - Enable **distributed tracing** using Zipkin or Jaeger.
-- Implement **rate limiting** for API protection, at the gateway service.
+- Complete and implement **rate limiting**, retry and circuit breaker for API protection, at the gateway service.
+- Ensure delete is role base (Admin Only)
 
 ## Contributing
 Contributions are welcome! Please follow these steps:
