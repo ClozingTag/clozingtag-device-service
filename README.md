@@ -75,7 +75,13 @@ Handles user authentication, role-based access control, and JWT token management
 git clone https://github.com/ClozingTag/clozingtag-auth-service.git
 cd clozingtag-auth-service
 mvn clean install
-mvn spring-boot:run
+```
+To have the postgres db local instance
+```bash
+docker compose up -d 
+```
+```bash
+SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 ```
 
 - The service will be available at `http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Auth+Service`.
@@ -111,7 +117,13 @@ You can perform all/other the api calls from [this](http://localhost:8181/webjar
 git clone https://github.com/ClozingTag/clozingtag-device-service.git
 cd clozingtag-device-service
 mvn clean install
-mvn spring-boot:run
+```
+To have the postgres db local instance
+```bash
+docker compose up -d 
+```
+```bash
+SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 ```
 
 - The service will be available at `http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Device+Service`.
@@ -132,7 +144,13 @@ Handles notification delivery related to device assignments.
 git clone https://github.com/ClozingTag/clozingtag-notification-service.git
 cd clozingtag-notification-service
 mvn clean install
-mvn spring-boot:run
+```
+To have the postgres db local instance
+```bash
+docker compose up -d 
+```
+```bash
+SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 ```
 
 - The service will be available at `http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Nofitication+Service`.
@@ -194,13 +212,13 @@ curl -X 'POST' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
-  "lastname": "Abel",
+  "lastname": "Saint",
   "firstname": "Smiles",
-  "username": "visitsmiles@getnada.com",
+  "username": "visitsmiles@clozingtag.com",
   "password": "smiles"
 }'
 - Use Oauth2 login endpoint `/oauth2/token` to authenticate and obtain a JWT token.
- curl --location --request POST 'http://localhost:8181/api/auth/oauth2/token?grant_type=password&username=visitsmiles%40getnada.com&password=smiles&scope=openid' \
+ curl --location --request POST 'http://localhost:8181/api/auth/oauth2/token?grant_type=password&username=visitsmiles%40clozingtag.com&password=smiles&scope=openid' \
 --header 'Content-Type: application/json'
 
 - Include the token in the Authorization header for secured endpoints:
@@ -247,7 +265,7 @@ minikube delete
 ## Future Improvements
 - Implement **Prometheus & Grafana** for monitoring.
 - Enable **distributed tracing** using Zipkin or Jaeger.
-- Implement **rate limiting** for API protection.
+- Implement **rate limiting** for API protection, at the gateway service.
 
 ## Contributing
 Contributions are welcome! Please follow these steps:
@@ -263,9 +281,4 @@ For questions or feedback, please contact:
 - **Saint Deemene**
 - **Email:** saint@closingtag.com
 - **GitHub:** [stdeemene](https://github.com/stdeemene)
-
-## Temp Contact
-For questions or feedback, please reach out:
-- **Email:** support@clozingtag.com
-- **GitHub:** [ClozingTag](https://github.com/ClozingTag)
 
