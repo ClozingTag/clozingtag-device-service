@@ -67,7 +67,6 @@ Handles user authentication, role-based access control, and JWT token management
 ### Features
 - User registration & login
 - JWT-based authentication
-- Role-based authorization
 
 ### Setup Instructions
 #### Build and Run Locally
@@ -96,7 +95,6 @@ Manages mobile devices assigned to staff.
 ### Features
 - CRUD operations for devices
 - Fetch devices by brand and state
-- Role-based permissions for device modifications
 
 ### API Endpoints
 | Method | Endpoint | Description |
@@ -136,7 +134,6 @@ Handles notification delivery related to device assignments.
 
 ### Features
 - Sends notifications to users
-- Supports email and push notifications
 
 ### Setup Instructions
 #### Build and Run Locally
@@ -227,10 +224,6 @@ curl -X 'POST' \
 Authorization: Bearer <token>
 ```
 
-## Audit Logging
-- All device modifications (create, update, delete) are logged in the `audit_log` table.
-- Query the `audit_log` table to view modification history.
-
 ## Testing
 
 ### Unit Tests (Device service only)
@@ -267,6 +260,8 @@ minikube delete
 - Enable **distributed tracing** using Zipkin or Jaeger.
 - Complete and implement **rate limiting**, retry and circuit breaker for API protection, at the gateway service.
 - Ensure delete is role base (Admin Only)
+- All device modifications (create, update, delete) are logged in the `audit_log` table.
+
 
 ## Contributing
 Contributions are welcome! Please follow these steps:
