@@ -176,32 +176,51 @@ GitHub Container Registry (GHCR) secret added to Kubernetes
 ```bash
 minikube start --driver=docker
 ```
-
+### 2. View Minikube Dashboard
+```bash
+minikube dashboard
+```
 ### **To deploy all services on Kubernetes:**
 1. **Deploy Discovery Service**
    ```bash
    kubectl apply -f k8s/clozingtag-discovery-service-deployment.yaml
+   kubectl get svc
+   kubectl port-forward svc/clozingtag-discovery-service-svc 8761:8761
    ```
 2. **Deploy Gateway Service**
    ```bash
    kubectl apply -f k8s/clozingtag-gateway-service-db-deployment.yaml
    kubectl apply -f k8s/clozingtag-gateway-service-deployment.yaml
+   kubectl port-forward svc/clozingtag-gateway-service-svc 8181:8181
    ```
+   open the link http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Gateway+Service
+
 3. **Deploy Auth Service (DB first, then service)**
    ```bash
    kubectl apply -f k8s/clozingtag-auth-service-db-deployment.yaml
    kubectl apply -f k8s/clozingtag-auth-service-deployment.yaml
    ```
+   Give the it some minutes to register with Eureka server then either
+   open the link http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Auth+Service
+   or select ClozingTag Auth Service from the select definition on the Gateway Swagger Page
+
 4. **Deploy Device Service (DB first, then service)**
    ```bash
    kubectl apply -f k8s/clozingtag-device-service-db-deployment.yaml
    kubectl apply -f k8s/clozingtag-device-service-deployment.yaml
    ```
+   Give the it some minutes to register with Eureka server then either
+   open the link http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Device+Service
+   or select ClozingTag Device Service from the select definition  on the Gateway Swagger Page
+
 5. **Deploy Notification Service (DB first, then service)**
    ```bash
    kubectl apply -f k8s/clozingtag-notification-service-db-deployment.yaml
    kubectl apply -f k8s/clozingtag-notification-service-deployment.yaml
    ```
+   Give the it some minutes to register with Eureka server then either
+   open the link http://localhost:8181/webjars/swagger-ui/index.html?urls.primaryName=ClozingTag+Notification+Service
+   or select ClozingTag Notification Service from the select definition on the Gateway Swagger Page
 
 ---
 
@@ -254,14 +273,21 @@ minikube start --driver=docker
 curl --location --request POST 'http://localhost:8181/api/auth/oauth2/token?grant_type=password&username=saintsmiles%40clozingtag.com&password=smiles&scope=openid' \
 --header 'Content-Type: application/json'
 ```
-- Include the token in the Authorization header for secured endpoints:
+- Include the token in the Authorization header for secured endpoints
 
 ```http
 Authorization: Bearer <token>
 ```
-
 ## Testing
+1. Switch to ClosingTag Device Service 
+2. Add the Auth Token
+3. Create a new device
+4. Switch to Closging Notification Service
+5. Add the same token in the Auth Token and Get all notifications
+6. Call other endpoints
 
+
+## Local Deployment Testing
 ### Unit Tests (Device service only)
 Run unit tests using Maven:
 ```bash
@@ -295,7 +321,7 @@ minikube delete
 - Implement **Prometheus & Grafana** for monitoring.
 - Enable **distributed tracing** using Zipkin or Jaeger.
 - Ensure delete is role base (Admin Only)
-- All device modifications (create, update, delete) are logged in the `audit_log` table.
+- All device modifications (create, update, delete) should logged in the `audit_log` table.
 
 
 ## Contributing

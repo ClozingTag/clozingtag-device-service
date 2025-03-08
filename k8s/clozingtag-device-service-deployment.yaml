@@ -84,7 +84,7 @@ spec:
                 secretKeyRef:
                   name: clozingtag-device-service-db-secret
                   key: db-pass
-          image: ghcr.io/clozingtag/clozingtag-device-service:df28771  #to be updated by the workflow
+          image: <IMAGE>  #to be updated by the workflow
           imagePullPolicy: IfNotPresent
           name: clozingtag-device-service
           ports:
