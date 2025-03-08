@@ -142,12 +142,13 @@ public class DeviceServiceImpl implements DeviceService {
     private void sendDeviceLogs(DeviceEntity device, String option) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy HH:mm:ss");
         CustomUserEntity customUserEntity = getAuthenticatedUser();
-        String body = "Hi " + customUserEntity.getName() + ",\n\n"
+        String body = "Hi Admin,\n\n"
                 + "A device " + option + " occurred.\n"
                 + "Name: " + device.getName() + "\n"
                 + "Brand: " + device.getBrand() + "\n"
                 + "Current State: " + device.getState().name() + "\n"
                 + "Time: " + LocalDateTime.now().format(formatter) + "\n"
+                + "By: " + customUserEntity.getName() + "\n"
                 + "Stay safe,";
         customExchangeService.createNotification(NotificationRequest.builder()
                 .email(customUserEntity.getUsername())
@@ -158,7 +159,7 @@ public class DeviceServiceImpl implements DeviceService {
                 .template(option)
                 .emailParams(Map.of("name", device.getName(), "brand", device.getBrand(), "state", device.getState().name(), "data",
                         LocalDateTime.now().format(formatter)))
-                .subject(customUserEntity.getUsername())
+                .subject("Device " + option)
                 .build());
 
 
@@ -171,7 +172,6 @@ public class DeviceServiceImpl implements DeviceService {
             return (CustomUserEntity) principal;
         } else if (principal instanceof UserDetails) {
             System.out.println("principal = " + principal);
-//            return new CustomUserEntity((UserDetails) principal);
             return (CustomUserEntity) principal;
         } else {
             throw new IllegalStateException("User not authenticated");
