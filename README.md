@@ -53,7 +53,15 @@ This service is the **API Gateway**, handling routing, authentication, and secur
 git clone https://github.com/ClozingTag/clozingtag-gateway-service.git
 cd clozingtag-gateway-service
 mvn clean install
-mvn spring-boot:run
+```
+To have the redis db local instance
+```bash
+docker compose up -d 
+```
+To run the application
+```bash
+SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
+
 ```
 - API Gateway will be available at `http://localhost:8181/webjars/swagger-ui/index.html`. with a select definition to show the contract of the other services
 
@@ -80,6 +88,7 @@ To have the postgres db local instance
 ```bash
 docker compose up -d 
 ```
+To run the application
 ```bash
 SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 ```
@@ -122,6 +131,7 @@ To have the postgres db local instance
 ```bash
 docker compose up -d 
 ```
+To run the application
 ```bash
 SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 ```
@@ -149,6 +159,7 @@ To have the postgres db local instance
 ```bash
 docker compose up -d 
 ```
+To run the application
 ```bash
 SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 ```
@@ -176,6 +187,7 @@ minikube start --driver=docker
    ```
 2. **Deploy Gateway Service**
    ```bash
+   kubectl apply -f k8s/clozingtag-gateway-service-db-deployment.yaml
    kubectl apply -f k8s/clozingtag-gateway-service-deployment.yaml
    ```
 3. **Deploy Auth Service (DB first, then service)**
@@ -199,28 +211,52 @@ minikube start --driver=docker
 ## Authentication & Security
 ## Authentication
 - Create a role (no token needed) (can be done from the swagger page)
-curl -X 'POST' \
-  'http://localhost:8181/api/auth/v1/roles' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "role": "User" //"Admin"
-}'
+---bash
+    curl -X 'POST' \
+      'http://localhost:8181/api/auth/v1/roles' \
+      -H 'accept: */*' \
+      -H 'Content-Type: application/json' \
+      -d '{
+      "role": "User" //"Admin"
+    }'
+---
 - Create a user (no token needed) (can be done from the swagger page)
-  curl -X 'POST' \
-  'http://localhost:8181/api/auth/v1/guests/user' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "lastname": "Saint",
-  "firstname": "Smiles",
-  "username": "visitsmiles@clozingtag.com",
-  "password": "smiles"
-}'
+---bash
+      curl -X 'POST' \
+      'http://localhost:8181/api/auth/v1/guests/user' \
+      -H 'accept: */*' \
+      -H 'Content-Type: application/json' \
+      -d '{
+      "lastname": "Saint",
+      "firstname": "Smiles",
+      "username": "saintsmiles@clozingtag.com",
+      "password": "smiles"
+    }'
+---
+- Response
+```bash
+ {
+     "id": 1,
+     "name": "Saint Smiles",
+     "username": "saintsmiles@clozingtag.com",
+     "lastname": "Saint",
+     "firstname": "Smiles",
+     "roles": [
+        {
+            "id": 2,
+            "name": "ROLE_USER",
+            "description": "User",
+            "authority": "ROLE_USER"
+        }
+     ],
+     "createdAt": "2025-03-08T08:30:12.678198"
+ }
+```
 - Use Oauth2 login endpoint `/oauth2/token` to authenticate and obtain a JWT token.
- curl --location --request POST 'http://localhost:8181/api/auth/oauth2/token?grant_type=password&username=visitsmiles%40clozingtag.com&password=smiles&scope=openid' \
+```bash
+curl --location --request POST 'http://localhost:8181/api/auth/oauth2/token?grant_type=password&username=saintsmiles%40clozingtag.com&password=smiles&scope=openid' \
 --header 'Content-Type: application/json'
-
+```
 - Include the token in the Authorization header for secured endpoints:
 
 ```http
@@ -265,7 +301,6 @@ minikube delete
 ## Future Improvements
 - Implement **Prometheus & Grafana** for monitoring.
 - Enable **distributed tracing** using Zipkin or Jaeger.
-- Complete and implement **rate limiting**, retry and circuit breaker for API protection, at the gateway service.
 - Ensure delete is role base (Admin Only)
 
 ## Contributing
